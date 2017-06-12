@@ -35,19 +35,19 @@ class Student
      * @param $idAlumno Identificador del alumno
      * @return mixed
      */
-    public static function getByName($name)
+    public static function getById($id)
     {
         // Consulta de la tabla Alumnos
         $consulta = "SELECT name,
                             address,
                             mobile
                              FROM Student
-                             WHERE name = ?";
+                             WHERE id = ?";
         try {
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare($consulta);
             // Ejecutar sentencia preparada
-            $comando->execute(array($idAlumno));
+            $comando->execute(array($id));
             // Capturar primera fila del resultado
             $row = $comando->fetch(PDO::FETCH_ASSOC);
             return $row;
@@ -67,6 +67,7 @@ class Student
 
      */
     public static function update(
+        $id,
         $name,
         $address,
         $mobile
@@ -75,11 +76,11 @@ class Student
         // Creando consulta UPDATE
         $consulta = "UPDATE Student" .
             " SET name=?, address=?, mobile=?" .
-            "WHERE name=?";
+            "WHERE id=?";
         // Preparar la sentencia
         $cmd = Database::getInstance()->getDb()->prepare($consulta);
         // Relacionar y ejecutar la sentencia
-        $cmd->execute(array($address, $mobile, $name));
+        $cmd->execute(array($name, $address, $mobile,$id));
         return $cmd;
     }
     /**
@@ -90,6 +91,7 @@ class Student
      * @return PDOStatement
      */
     public static function insert(
+        $id,
         $name,
         $address,
         $mobile
@@ -97,14 +99,16 @@ class Student
     {
         // Sentencia INSERT
         $comando = "INSERT INTO Student ( " .
+            "id,".
             "name," .
             "address," .
             " mobile)" .
-            " VALUES( ?,?,?)";
+            " VALUES( ?,?,?,?)";
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
         return $sentencia->execute(
             array(
+                $id,
                 $name,
                 $address,
                 $mobile
@@ -117,13 +121,13 @@ class Student
      * @param $idAlumno identificador de la tabla Alumnos
      * @return bool Respuesta de la eliminación
      */
-    public static function delete($name)
+    public static function delete($id)
     {
         // Sentencia DELETE
-        $comando = "DELETE FROM Student WHERE name=?";
+        $comando = "DELETE FROM Student WHERE id=?";
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
-        return $sentencia->execute(array($name));
+        return $sentencia->execute(array($id));
     }
 }
 ?>
